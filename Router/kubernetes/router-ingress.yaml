@@ -1,0 +1,13 @@
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: router-ingress
+spec:
+  rules:
+  - host: pomodoro.poms
+    http:
+      paths:
+      - path: /foo
+        backend:
+          serviceName: iam-id-mgmt-api-service-nodeport
+          servicePort: 2080

@@ -1,0 +1,53 @@
+kind: ReplicaSet
+apiVersion: apps/v1beta2
+metadata:
+  name: router-reverse-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: router-reverse-proxy
+  template:
+    metadata:
+      labels:
+        app: router-reverse-proxy
+    spec:
+      containers:
+      - name: router-reverse-proxy
+        image: rgoyard/apache-proxy:latest
+
+        # image: localhost:32000/router-reverse-proxy
+
+        # workingDir: /app/IdentityManagement/IdentityManagement.Api
+        # command: ["dotnet"]
+        # args: ["run"]
+
+        # readinessProbe:
+        #   httpGet:
+        #     path: /ping
+        #     port: 2080
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 10            
+        # livenessProbe:
+        #   httpGet:
+        #     path: /ping
+        #     port: 2080
+        #   initialDelaySeconds: 120          
+        #   periodSeconds: 10       
+
+        ports:
+        - name: https
+          protocol: TCP
+          containerPort: 443
+        - name: http
+          protocol: TCP
+          containerPort: 80
+        volumeMounts:
+        - name: revproxyconf
+          mountPath: /conf/
+          readOnly: true          
+      volumes:
+      - name: revproxyconf
+        configMap:
+          # name: foobar
+          name: router-revproxyconf
