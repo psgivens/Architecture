@@ -15,8 +15,7 @@ param (
     [Parameter(Mandatory=$true)]
     [ValidateSet(
         "volume",
-        "configmap",
-        "dbjob"
+        "configmap"
     )]
     [string]
     $Part
@@ -27,7 +26,7 @@ $kubeconfig = $details["kubernetes"]
 
 switch ($Part.ToLower()) {
     "volume" {  
-            kubectl delete -f "$kubeconfig/$ServiceName-db-persistent-volume-db.yaml"
+            kubectl delete -f "$kubeconfig/$ServiceName-db-persistent-volume.yaml"
     }
     "configmap" {
             kubectl delete -f "$kubeconfig/$ServiceName-configmap.yaml"

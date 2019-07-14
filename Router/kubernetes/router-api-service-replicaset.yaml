@@ -14,8 +14,9 @@ spec:
     spec:
       containers:
       - name: router-reverse-proxy
-        image: rgoyard/apache-proxy:latest
+        image: envoyproxy/envoy:latest
 
+        # image: rgoyard/apache-proxy:latest
         # image: localhost:32000/router-reverse-proxy
 
         # workingDir: /app/IdentityManagement/IdentityManagement.Api
@@ -36,15 +37,15 @@ spec:
         #   periodSeconds: 10       
 
         ports:
-        - name: https
-          protocol: TCP
-          containerPort: 443
+        # - name: https
+        #   protocol: TCP
+        #   containerPort: 443
         - name: http
           protocol: TCP
-          containerPort: 80
+          containerPort: 2081
         volumeMounts:
         - name: revproxyconf
-          mountPath: /conf/
+          mountPath: /etc/envoy/
           readOnly: true          
       volumes:
       - name: revproxyconf

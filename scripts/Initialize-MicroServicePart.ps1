@@ -27,7 +27,7 @@ $kubeconfig = $details["kubernetes"]
 
 switch ($Part.ToLower()) {
     "volume" {  
-            kubectl create -f "$kubeconfig/$ServiceName-db-persistent-volume-db.yaml"
+            kubectl create -f "$kubeconfig/$ServiceName-db-persistent-volume.yaml"
     }
     "configmap" {
             kubectl create -f "$kubeconfig/$ServiceName-configmap.yaml"

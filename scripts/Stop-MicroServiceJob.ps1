@@ -26,12 +26,12 @@ $kubeconfig = $details["kubernetes"]
 switch ($Job.ToLower()) {
     "initialize-db" {
         Write-Host "Delete the initialization job 'dotnet ef database update'"
-        kubectl delete -f "$kubeconfig/$ServiceName-api-job-initialize-db.yaml"
+        kubectl delete -f "$kubeconfig/$ServiceName-job-initialize-db.yaml"
     }
     
     "integration-tests" {
         Write-Host "Delete the integration tests job"
-        kubectl delete -f "$kubeconfig/$ServiceName-api-job-integration-tests.yaml"
+        kubectl delete -f "$kubeconfig/$ServiceName-job-integration-tests.yaml"
     }
     
     Default {

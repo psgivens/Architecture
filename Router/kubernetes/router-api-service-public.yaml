@@ -7,9 +7,13 @@ spec:
   selector:
     app: router-reverse-proxy
   ports:
+  # - name: http
+  #   port: 2081
+  #   targetPort: 2081
   - name: http
-    port: 80
-    targetPort: 80
-  - name: https
-    port: 443
-    targetPort: 443
+    port: 10000
+    targetPort: 10000
+
+  # - name: https
+  #   port: 443
+  #   targetPort: 443

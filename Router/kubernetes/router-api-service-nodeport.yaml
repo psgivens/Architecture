@@ -8,10 +8,10 @@ spec:
     app: router-reverse-proxy
   ports:
   - name: http
-    port: 80
-    targetPort: 80
-    nodePort: 30080
-  - name: https
-    port: 443
-    targetPort: 443
-    nodePort: 30443
+    port: 2081
+    targetPort: 2081
+    nodePort: 32081
+  # - name: https
+  #   port: 443
+  #   targetPort: 443
+  #   nodePort: 30443

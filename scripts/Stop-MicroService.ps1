@@ -41,11 +41,7 @@ switch ($Part.ToLower()) {
         if (-not $NodePortOnly) {
             kubectl delete -f $kubeconfig/$ServiceName-db-statefulset.yaml
 
-            kubectl delete pvc/data-$ServiceName-db-0
-            
-            kubectl delete -f $kubeconfig/$ServiceName-db-persistent-volume-pgsql.yaml
-            
-            kubectl delete -f $kubeconfig/$ServiceName-api-configmap.yaml        
+            kubectl delete pvc/data-$ServiceName-db-0            
         }
 
         # Necessary if we are debugging an app running on our local machine. 
@@ -62,8 +58,8 @@ switch ($Part.ToLower()) {
         kubectl delete -f "$kubeconfig/$ServiceName-api-service-nodeport.yaml"
     }
     "all" {
-        . "$PSScriptRoot/Stop-MicroService.ps1" -ServiceName $ServiceName -Part "db" -NodePortOnly $NodePortOnly 
-        . "$PSScriptRoot/Stop-MicroService.ps1" -ServiceName $ServiceName -Part "api" -NodePortOnly $NodePortOnly 
+        . "$PSScriptRoot/Stop-MicroService.ps1" -ServiceName $ServiceName -Part "db" -NodePortOnly $NodePortOnly -Cold $Cold
+        . "$PSScriptRoot/Stop-MicroService.ps1" -ServiceName $ServiceName -Part "api" -NodePortOnly $NodePortOnly -Cold $Cold
     }
     Default {
         Get-Help "$PSScriptRoot/Stop-MicroService.ps1" 
