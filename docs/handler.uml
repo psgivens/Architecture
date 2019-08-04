@@ -1,0 +1,12 @@
+@startuml
+|Function\nDefinition|
+start
+:handle;
+|#AntiqueWhite|Composition|
+:Inject environment\ndependencies;
+|Instanciation|
+:Inject instance\ndependencies;
+|#AntiqueWhite|Execution|
+:Pass arguments;
+stop
+@enduml
