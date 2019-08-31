@@ -9,13 +9,27 @@ param (
     $ServiceName
 )
 
-& "$PSScriptRoot/Build-MicroService.ps1" -ServiceName $ServiceName
-
 $details = . "$PSScriptRoot/Get-MicroServiceDetails.ps1" -ServiceName $ServiceName
+
+$Context = if ($details["context"]) {
+  $details["context"] 
+} else {
+  $env:POMODORO_REPOS
+}
+
+$DockerFile = if ($details["dockerfile"]) {
+  $details["dockerfile"] 
+} else {
+  $Context, "Dockerfile" -join "/"
+}
 
 $ImageName = $details["imagename"]
 
 $image = "localhost:32000/$ServiceName-$ImageName"
 
-docker push $image
+docker build `
+  -t $image `
+  -f $DockerFile `
+  $Context
+
 
