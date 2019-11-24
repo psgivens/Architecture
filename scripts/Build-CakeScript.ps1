@@ -1,3 +1,4 @@
+#!/usr/bin/pwsh
 
 docker run `
   -it --rm `
