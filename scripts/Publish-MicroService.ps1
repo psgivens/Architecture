@@ -2,9 +2,9 @@
 param (
     # Parameter help description
     [Parameter(Mandatory=$true)]
-    [ValidateSet(
-        "iam-id-mgmt"
-    )]
+    # [ValidateSet(
+    #     "iam-id-mgmt"
+    # )]
     [string]
     $ServiceName
 )
@@ -13,7 +13,7 @@ param (
 
 $details = . "$PSScriptRoot/Get-MicroServiceDetails.ps1" -ServiceName $ServiceName
 
-$ImageName = $details["imagename"]
+$ImageName = $details.imagesuffix
 
 $image = "localhost:32000/$ServiceName-$ImageName"
 

@@ -2,33 +2,38 @@
 param (
     # Parameter help description
     [Parameter(Mandatory=$true)]
-    [ValidateSet(
-        "iam-id-mgmt"
-    )]
     [string]
     $ServiceName
 )
 
 $details = . "$PSScriptRoot/Get-MicroServiceDetails.ps1" -ServiceName $ServiceName
 
-$Context = if ($details["context"]) {
-  $details["context"] 
+$Context = if ($details.context) {
+  "$env:BESPIN_REPOS/$($details.context)"
 } else {
-  $env:POMODORO_REPOS
+  $env:BESPIN_REPOS
 }
 
-$DockerFile = if ($details["dockerfile"]) {
-  $details["dockerfile"] 
+Write-Host ("context: $Context")
+
+$DockerFile = if ($details.dockerfile) {
+  $Context, $details.dockerfile -join "/"
+
 } else {
   $Context, "Dockerfile" -join "/"
 }
 
-$ImageName = $details["imagename"]
+Write-Host ("Dockerfile: $DockerFile")
 
-$image = "localhost:32000/$ServiceName-$ImageName"
+$ImageName = $details.imagesuffix
+$lower = $ServiceName.ToLower()
+
+$image = "$lower-$ImageName"
+$image_remote = "localhost:32000/$lower-$ImageName"
 
 docker build `
   -t $image `
+  -t $image_remote `
   -f $DockerFile `
   $Context
 

@@ -5,11 +5,25 @@
 
 param (
     # Parameter help description
-    [Parameter(Mandatory=$true)]
-    [ValidateSet(
-        "iam-id-mgmt",
-        "router"
+    [Parameter(Mandatory=$true,
+    ParameterSetName="compose"
     )]
+    [switch]
+    $Compose,
+    
+    # Parameter help description
+    [Parameter(Mandatory=$true,
+    ParameterSetName="k8s"
+    )]
+    [switch]
+    $K8s,
+        
+    # Parameter help description
+    [Parameter(Mandatory=$true)]
+    # [ValidateSet(
+    #     "iam-id-mgmt",
+    #     "router"
+    # )]
     [string]
     $ServiceName,
     [Parameter(Mandatory=$false)]
@@ -20,72 +34,89 @@ param (
     )]
     [string]
     $Part = "all",
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$false,
+    ParameterSetName="k8s"
+    )]
     [bool]
     $NodePort,
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$false,
+    ParameterSetName="k8s"
+    )]
     [bool]
     $SkipService,
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$false,
+    ParameterSetName="k8s"
+    )]
     [bool]
     $Cold
 )
 
 $details = . "$PSScriptRoot/Get-MicroServiceDetails.ps1" -ServiceName $ServiceName
-$kubeconfig = $details["kubernetes"]
 
-switch ($Part.ToLower()) {
-    "db" {  
-        if (-not $SkipService) {
-            if ($Cold) {
-                . "$PSScriptRoot/Initialize-MicroServicePart.ps1" -ServiceName $ServiceName -Part "volume" 
-                . "$PSScriptRoot/Initialize-MicroServicePart.ps1" -ServiceName $ServiceName -Part "configmap" 
-            }
+if ($Compose) {
+    Push-Location "$env:BESPIN_REPOS/$ServiceName/compose"
+    Write-Host ("Launching ``docker-compose up`` from " + "$env:BESPIN_REPOS/$ServiceName/compose")
+    docker-compose up
+    Pop-Location
+    
+} else {
+     
+    $kubeconfig = $details["kubernetes"]
 
-            kubectl create -f "$kubeconfig/$ServiceName-db-statefulset.yaml"
-
-            Write-Host "Wait for the service to become online..."
-            $retries=10
-            foreach ($i in 1..$retries) {
-                $cmd = "kubectl get pods -o json -l app=$ServiceName-db"
-                $phase = Invoke-Expression $cmd | ConvertFrom-Json | ForEach-Object {$_.items.status.phase}
-                Write-Host "phase: $phase"
-                if ($phase -eq 'Running') { 
-                    Write-Host "System ready"
-                    break }
-                if ($i -eq $retries) { 
-                    Write-Host "Match not found after $retries retries"
-                    exit
+    switch ($Part.ToLower()) {
+        "db" {  
+            if (-not $SkipService) {
+                if ($Cold) {
+                    . "$PSScriptRoot/Initialize-MicroServicePart.ps1" -ServiceName $ServiceName -Part "volume" 
+                    . "$PSScriptRoot/Initialize-MicroServicePart.ps1" -ServiceName $ServiceName -Part "configmap" 
                 }
-                Start-Sleep 1
+
+                kubectl create -f "$kubeconfig/$ServiceName-db-statefulset.yaml"
+
+                Write-Host "Wait for the service to become online..."
+                $retries=10
+                foreach ($i in 1..$retries) {
+                    $cmd = "kubectl get pods -o json -l app=$ServiceName-db"
+                    $phase = Invoke-Expression $cmd | ConvertFrom-Json | ForEach-Object {$_.items.status.phase}
+                    Write-Host "phase: $phase"
+                    if ($phase -eq 'Running') { 
+                        Write-Host "System ready"
+                        break }
+                    if ($i -eq $retries) { 
+                        Write-Host "Match not found after $retries retries"
+                        exit
+                    }
+                    Start-Sleep 1
+                }
+
+                if ($Cold) {
+                    . "$PSScriptRoot/Start-MicroServiceJob.ps1" -ServiceName $ServiceName -Job "initialize-db" 
+                }
+            }
+            if ($NodePort) {
+                # Necessary if we are debugging an app running on our local machine. 
+                kubectl create -f "$kubeconfig/$ServiceName-db-service-nodeport.yaml"
+            }        
+        }
+        "api" {                
+            if (-not $SkipService) {
+                kubectl create -f "$kubeconfig/$ServiceName-api-service-replicaset.yaml"
+
+                kubectl create -f "$kubeconfig/$ServiceName-api-service-public.yaml"
             }
 
-            if ($Cold) {
-                . "$PSScriptRoot/Start-MicroServiceJob.ps1" -ServiceName $ServiceName -Job "initialize-db" 
-            }
+            if ($NodePort) {
+                # Necessary if we are debugging an app running on our local machine. 
+                kubectl create -f "$kubeconfig/$ServiceName-api-service-nodeport.yaml"
+            }        
         }
-        if ($NodePort) {
-            # Necessary if we are debugging an app running on our local machine. 
-            kubectl create -f "$kubeconfig/$ServiceName-db-service-nodeport.yaml"
-        }        
-    }
-    "api" {                
-        if (-not $SkipService) {
-            kubectl create -f "$kubeconfig/$ServiceName-api-service-replicaset.yaml"
-
-            kubectl create -f "$kubeconfig/$ServiceName-api-service-public.yaml"
+        "all" {
+            . "$PSScriptRoot/Start-MicroService.ps1" -ServiceName $ServiceName -Part "db" -NodePort $NodePort -SkipService $SkipService -Cold $Cold
+            . "$PSScriptRoot/Start-MicroService.ps1" -ServiceName $ServiceName -Part "api" -NodePort $NodePort -SkipService $SkipService -Cold $Cold
         }
+        Default {
+            Get-Help "$PSScriptRoot/Start-MicroService.ps1" 
+        }
+    }
 
-        if ($NodePort) {
-            # Necessary if we are debugging an app running on our local machine. 
-            kubectl create -f "$kubeconfig/$ServiceName-api-service-nodeport.yaml"
-        }        
-    }
-    "all" {
-        . "$PSScriptRoot/Start-MicroService.ps1" -ServiceName $ServiceName -Part "db" -NodePort $NodePort -SkipService $SkipService -Cold $Cold
-        . "$PSScriptRoot/Start-MicroService.ps1" -ServiceName $ServiceName -Part "api" -NodePort $NodePort -SkipService $SkipService -Cold $Cold
-    }
-    Default {
-        Get-Help "$PSScriptRoot/Start-MicroService.ps1" 
-    }
 }

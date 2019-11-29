@@ -1,6 +1,6 @@
 #!/usr/bin/pwsh
 
-$buildpath = "$env:POMODORO_REPOS/Architecture"
+$buildpath = "$env:BESPIN_REPOS/Architecture"
 
 Write-Host "Build docker_utils image"
 docker build `
