@@ -1,4 +1,4 @@
-# Building Microservice
+# Building and Running Microservice
 
 ## docker-compose
 

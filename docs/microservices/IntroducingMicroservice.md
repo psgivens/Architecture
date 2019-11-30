@@ -1,22 +1,25 @@
 # Microservices
 
-### Expected directory hierarchy
+## Expected directory hierarchy
 
 * $BESPIN_REPOS
-* * \<microservicename\>
-* * * \<microservicename\>.sln
-* * * microserviceinfo.json
-* * * kubernetes
-* * * compose
-* * * docker-compose.yaml
-* * * docker-compose-init.yaml
-* * * \<microservicename\>
-* * * * Dockerfile
-* * * * config
-* * * * src
+  * \<microservicename\>
+    * \<microservicename\>.sln
+    * microserviceinfo.json
+    * kubernetes
+      * // yaml files
+    * compose
+      * docker-compose.yaml
+      * docker-compose-init.yaml
+    * \<microservicename\>
+      * Dockerfile
+      * config
+        * // config files that can be replaced by environment
+      * src
+        * // source code
 
 
-### Format of microserviceinfo.json
+## Format of microserviceinfo.json
 
     // $BESPIN_REPOS/<microservicename>/microserviceinfo.json
     {
