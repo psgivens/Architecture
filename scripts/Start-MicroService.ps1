@@ -61,7 +61,20 @@ if ($Compose) {
     
 } else {
      
-    $kubeconfig = $details["kubernetes"]
+    # $kubeconfig = $details["kubernetes"]
+    # $details = . "$PSScriptRoot/Get-MicroServiceDetails.ps1" -ServiceName $ServiceName
+
+    $ServicePath = "$env:BESPIN_REPOS/$ServiceName"
+
+    if (-not (Test-Path $ServicePath)) {
+        Write-Host "$servicePath not found"
+        throw "$servicePath not found"
+        exit
+    }
+
+    $servicename_lower = $ServiceName.ToLower()
+    $kubeconfig = "$ServicePath/kubernetes"
+
 
     switch ($Part.ToLower()) {
         "db" {  
@@ -71,7 +84,7 @@ if ($Compose) {
                     . "$PSScriptRoot/Initialize-MicroServicePart.ps1" -ServiceName $ServiceName -Part "configmap" 
                 }
 
-                kubectl create -f "$kubeconfig/$ServiceName-db-statefulset.yaml"
+                kubectl create -f "$kubeconfig/$servicename_lower-db-statefulset.yaml"
 
                 Write-Host "Wait for the service to become online..."
                 $retries=10
@@ -95,19 +108,19 @@ if ($Compose) {
             }
             if ($NodePort) {
                 # Necessary if we are debugging an app running on our local machine. 
-                kubectl create -f "$kubeconfig/$ServiceName-db-service-nodeport.yaml"
+                kubectl create -f "$kubeconfig/$servicename_lower-db-service-nodeport.yaml"
             }        
         }
         "api" {                
             if (-not $SkipService) {
-                kubectl create -f "$kubeconfig/$ServiceName-api-service-replicaset.yaml"
+                kubectl create -f "$kubeconfig/$servicename_lower-api-service-replicaset.yaml"
 
-                kubectl create -f "$kubeconfig/$ServiceName-api-service-public.yaml"
+                kubectl create -f "$kubeconfig/$servicename_lower-api-service-public.yaml"
             }
 
             if ($NodePort) {
                 # Necessary if we are debugging an app running on our local machine. 
-                kubectl create -f "$kubeconfig/$ServiceName-api-service-nodeport.yaml"
+                kubectl create -f "$kubeconfig/$servicename_lower-api-service-nodeport.yaml"
             }        
         }
         "all" {

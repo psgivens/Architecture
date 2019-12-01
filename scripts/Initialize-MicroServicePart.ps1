@@ -22,15 +22,25 @@ param (
     $Part
 )
 
-$details = . "$PSScriptRoot/Get-MicroServiceDetails.ps1" -ServiceName $ServiceName
-$kubeconfig = $details["kubernetes"]
+$ServicePath = "$env:BESPIN_REPOS/$ServiceName"
+
+if (-not (Test-Path $ServicePath)) {
+    Write-Host "$servicePath not found"
+    throw "$servicePath not found"
+    exit
+}
+
+$lower = $ServiceName.ToLower()
+
+# $details = . "$PSScriptRoot/Get-MicroServiceDetails.ps1" -ServiceName $ServiceName
+$kubeconfig = "$ServicePath/kubernetes"
 
 switch ($Part.ToLower()) {
     "volume" {  
-            kubectl create -f "$kubeconfig/$ServiceName-db-persistent-volume.yaml"
+            kubectl create -f "$kubeconfig/$lower-db-persistent-volume.yaml"
     }
     "configmap" {
-            kubectl create -f "$kubeconfig/$ServiceName-configmap.yaml"
+            kubectl create -f "$kubeconfig/$lower-configmap.yaml"
     }
     Default {
         Get-Help "$PSScriptRoot/Initialize-MicroService.ps1" 
