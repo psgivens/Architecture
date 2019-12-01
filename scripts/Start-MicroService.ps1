@@ -111,8 +111,8 @@ if ($Compose) {
             }        
         }
         "all" {
-            . "$PSScriptRoot/Start-MicroService.ps1" -ServiceName $ServiceName -Part "db" -NodePort $NodePort -SkipService $SkipService -Cold $Cold
-            . "$PSScriptRoot/Start-MicroService.ps1" -ServiceName $ServiceName -Part "api" -NodePort $NodePort -SkipService $SkipService -Cold $Cold
+            . "$PSScriptRoot/Start-MicroService.ps1" -ServiceName $ServiceName -Part "db" -NodePort $NodePort -SkipService $SkipService -Cold $Cold -K8s
+            . "$PSScriptRoot/Start-MicroService.ps1" -ServiceName $ServiceName -Part "api" -NodePort $NodePort -SkipService $SkipService -Cold $Cold -K8s
         }
         Default {
             Get-Help "$PSScriptRoot/Start-MicroService.ps1" 

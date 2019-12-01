@@ -6,10 +6,10 @@
 param (
     # Parameter help description
     [Parameter(Mandatory=$true)]
-    [ValidateSet(
-        "iam-id-mgmt",
-        "router"
-    )]
+    # [ValidateSet(
+    #     "iam-id-mgmt",
+    #     "router"
+    # )]
     [string]
     $ServiceName,
     [Parameter(Mandatory=$true)]

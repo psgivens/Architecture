@@ -14,8 +14,9 @@ param (
 $details = . "$PSScriptRoot/Get-MicroServiceDetails.ps1" -ServiceName $ServiceName
 
 $ImageName = $details.imagesuffix
+$lower = $ServiceName.ToLower()
 
-$image = "localhost:32000/$ServiceName-$ImageName"
+$image = "localhost:32000/$lower-$ImageName"
 
 docker push $image
 

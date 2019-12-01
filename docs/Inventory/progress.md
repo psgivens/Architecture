@@ -22,10 +22,12 @@ This page shows the expected status of the different microservices
 
 |                   | API     | Business | Event Source | Command Source  | 
 | ----------------- | ------- | -------- | ------------ | --------------- | 
-| Identity Mgmt     | **No**  | **No**   | Yes          | Yes             |  
+| Identity Mgmt     | **No**  | Yes (1)  | Yes (1)      | Yes (1)         |  
 | BasicService      | **No**  | **No**   | N/A          | N/A             |  
 | ActivityTrail     | **No**  | **No**   | N/A          | N/A             |  
 | BasicESService    | **No**  | **No**   | **No**       | **No**          | 
+
+1. Verified 12/1/2019
 
 ---
 
