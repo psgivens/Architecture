@@ -6,6 +6,13 @@
 param (
     # Parameter help description
     [Parameter(Mandatory=$true,
+    ParameterSetName="local"
+    )]
+    [switch]
+    $Local,
+
+    # Parameter help description
+    [Parameter(Mandatory=$true,
     ParameterSetName="compose"
     )]
     [switch]
@@ -53,10 +60,31 @@ param (
 
 $details = . "$PSScriptRoot/Get-MicroServiceDetails.ps1" -ServiceName $ServiceName
 
-if ($Compose) {
+if ($Local) {
+    switch ($Part.ToLower()) {
+        "db" {
+            Write-Host ("Launching ``docker-compose -f docker-compose-db.yml up`` from " + "$env:BESPIN_REPOS/$ServiceName/compose")
+            docker-compose -f docker-compose-db.yml up
+
+        }
+        default    {  
+            # Write-Host ("Launching ``docker-compose up`` from " + "$env:BESPIN_REPOS/$ServiceName/compose")
+            # docker-compose up
+        }
+    }
+} elseif ($Compose) {
     Push-Location "$env:BESPIN_REPOS/$ServiceName/compose"
-    Write-Host ("Launching ``docker-compose up`` from " + "$env:BESPIN_REPOS/$ServiceName/compose")
-    docker-compose up
+
+    switch ($Part.ToLower()) {
+        "db" {
+            Write-Host ("Launching ``docker-compose -f docker-compose-init.yml up`` from " + "$env:BESPIN_REPOS/$ServiceName/compose")
+            docker-compose -f docker-compose-init.yml up
+        }
+        default    {  
+            Write-Host ("Launching ``docker-compose up`` from " + "$env:BESPIN_REPOS/$ServiceName/compose")
+            docker-compose up
+        }
+    }
     Pop-Location
     
 } else {

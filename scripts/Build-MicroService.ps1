@@ -18,7 +18,6 @@ Write-Host ("context: $Context")
 
 $DockerFile = if ($details.dockerfile) {
   $Context, $details.dockerfile -join "/"
-
 } else {
   $Context, "Dockerfile" -join "/"
 }
@@ -35,6 +34,7 @@ docker build `
   -t $image `
   -t $image_remote `
   -f $DockerFile `
+  --network=host `
   $Context
 
 

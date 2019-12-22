@@ -11,6 +11,8 @@ param (
 
 & "$PSScriptRoot/Build-MicroService.ps1" -ServiceName $ServiceName
 
+# TODO: Verify that the build succeded
+
 $details = . "$PSScriptRoot/Get-MicroServiceDetails.ps1" -ServiceName $ServiceName
 
 $ImageName = $details.imagesuffix
@@ -20,3 +22,4 @@ $image = "localhost:32000/$lower-$ImageName"
 
 docker push $image
 
+Write-Host "Did the build succeed?"

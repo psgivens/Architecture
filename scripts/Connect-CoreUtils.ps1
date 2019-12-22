@@ -2,10 +2,11 @@
 
 Write-Host "Connecting with docker_utils"
 kubectl run `
-    -it docker-utils1 `
-    --image="localhost:32000/docker_utils" `
+    -it `
     --rm `
-    --restart=Never -- /bin/bash
+    --restart=Never `
+    docker-utils `
+    -- /bin/bash `
 
 
     

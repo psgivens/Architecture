@@ -9,12 +9,15 @@ This page shows the expected status of the different microservices
 |                   | Locally     | Docker-compose | Kubernetes | AZ     | AWS     |
 | ----------------- | ----------- | -------------- | ---------- | ------ | ------- |
 | Identity Mgmt     | **Unknown** | **No**         | **No** (1) | **No** | **No**  |
-| BasicService      | Yes(2)      | Yes (2)        | **No**     | **No** | **No**  |
+| BasicService      | Yes\* (3)   | Yes\* (2)        | **No**     | **No** | **No**  |
 | ActivityTrail     | **No**      | **No**         | **No**     | **No** | **No**  |
 | BasicESService    | **No**      | **No**         | **No**     | **No** | **No**  |
 
 1. Scripts are out of date  
-2. Verified 11/29/2019
+2. Manually verified 11/29/2019
+3. Manually verified 12/21/2019
+
+\*  Configuration file can contain either "localhost" or "basicservice_pomodoro-pgsql-1". This should be pushed in with the environment variable in docker-compose.
 
 ---
 
