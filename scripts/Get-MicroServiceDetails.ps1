@@ -54,7 +54,7 @@ if ($ServiceName) {
     #         Get-Help "$PSScriptPath/Start-MicroService.ps1" 
     #     }
     # }
-} else {
+} elseif ($List) {
     pushd $env:BESPIN_REPOS
     ls -d * |? { Test-Path "$_/microserviceinfo.json" } 
     popd

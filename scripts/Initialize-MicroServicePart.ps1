@@ -5,14 +5,15 @@
 
 param (
     # Parameter help description
-    [Parameter(Mandatory=$true)]
-    # [ValidateSet(
-    #     "iam-id-mgmt",
-    #     "router"
-    # )]
+    [Parameter(Mandatory = $true, ParameterSetName="kubernetes")]
+    [string]
+    $K8s,
+
+    # Parameter help description
+    [Parameter(Mandatory = $true)]
     [string]
     $ServiceName,
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [ValidateSet(
         "volume",
         "configmap",
@@ -21,6 +22,12 @@ param (
     [string]
     $Part
 )
+
+if (-not $K8s) {
+    Write-Host "Only -K8s is supported at this time"
+    throw "Only -K8s is supported at this time"
+    exit
+}
 
 $ServicePath = "$env:BESPIN_REPOS/$ServiceName"
 
@@ -31,18 +38,16 @@ if (-not (Test-Path $ServicePath)) {
 }
 
 $lower = $ServiceName.ToLower()
-
-# $details = . "$PSScriptRoot/Get-MicroServiceDetails.ps1" -ServiceName $ServiceName
 $kubeconfig = "$ServicePath/kubernetes"
 
 switch ($Part.ToLower()) {
     "volume" {  
-            kubectl create -f "$kubeconfig/$lower-db-persistent-volume.yaml"
+        kubectl create -f "$kubeconfig/$lower-db-persistent-volume.yaml"
     }
     "configmap" {
-            kubectl create -f "$kubeconfig/$lower-configmap.yaml"
+        kubectl create -f "$kubeconfig/$lower-configmap.yaml"
     }
     Default {
-        Get-Help "$PSScriptRoot/Initialize-MicroService.ps1" 
+        Get-Help "$PSScriptRoot/Initialize-MicroServicePart.ps1" 
     }
 }

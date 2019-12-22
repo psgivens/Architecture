@@ -1,10 +1,20 @@
 #!/usr/bin/pwsh
 
-$image = "localhost:32000/dotnet-stage"
+$buildpath = "$env:BESPIN_REPOS/Architecture"
 
-& $PSScriptRoot/Build-CoreDbgStage.ps1
+$image = "dotnet-stage"
+$image_remote = "localhost:32000/dotnet-stage"
 
-docker push $image
+Write-Host "Build dotnet stage image"
+docker build `
+    -t dotnet-stage `
+    -t $image `
+    -t $image_remote `
+    -f "$buildpath/tools/dotnet.stage.Dockerfile" `
+    "$buildpath/tools"
+
+
+docker push $image_remote
 
 
 

@@ -5,20 +5,15 @@
 
 param (
     # Must be supplied. In the future we will support alternative switches.
-    [Parameter(Mandatory=$false
-    # ParameterSetName="k8s"
-    )]
+    [Parameter(Mandatory=$true, ParameterSetName="k8s" )]
     [switch]
     $K8s,
     
     # Parameter help description
     [Parameter(Mandatory=$true)]
-    # [ValidateSet(
-    #     "iam-id-mgmt",
-    #     "router"
-    # )]
     [string]
     $ServiceName,
+
     [Parameter(Mandatory=$false)]
     [ValidateSet(
         "db",
@@ -27,16 +22,21 @@ param (
     )]
     [string]
     $Part = "all",
+
     [Parameter(Mandatory=$false)]
     [bool]
     $NodePortOnly,
+
     [Parameter(Mandatory=$false)]
     [bool]
     $Cold
 )
 
-# $details = . "$PSScriptRoot/Get-MicroServiceDetails.ps1" -ServiceName $ServiceName
-# $kubeconfig = $details["kubernetes"]
+if (-not $K8s) {
+    Write-Host "Only -K8s is supported at this time"
+    throw "Only -K8s is supported at this time"
+    exit
+}
 
 $ServicePath = "$env:BESPIN_REPOS/$ServiceName"
 

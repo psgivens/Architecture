@@ -5,14 +5,16 @@
 
 param (
     # Parameter help description
-    [Parameter(Mandatory=$true)]
-    # [ValidateSet(
-    #     "iam-id-mgmt",
-    #     "router"
-    # )]
+    [Parameter(Mandatory = $true, ParameterSetName = "kubernetes")]
+    [string]
+    $K8s,
+    
+    # Parameter help description
+    [Parameter(Mandatory = $true)]
     [string]
     $ServiceName,
-    [Parameter(Mandatory=$true)]
+
+    [Parameter(Mandatory = $true)]
     [ValidateSet(
         "volume",
         "configmap"
@@ -21,8 +23,11 @@ param (
     $Part
 )
 
-# $details = . "$PSScriptRoot/Get-MicroServiceDetails.ps1" -ServiceName $ServiceName
-# $kubeconfig = $details["kubernetes"]
+if (-not $K8s) {
+    Write-Host "Only -K8s is supported at this time"
+    throw "Only -K8s is supported at this time"
+    exit
+}
 
 $ServicePath = "$env:BESPIN_REPOS/$ServiceName"
 
@@ -38,10 +43,10 @@ $kubeconfig = "$ServicePath/kubernetes"
 
 switch ($Part.ToLower()) {
     "volume" {  
-            kubectl delete -f "$kubeconfig/$servicename_lower-db-persistent-volume.yaml"
+        kubectl delete -f "$kubeconfig/$servicename_lower-db-persistent-volume.yaml"
     }
     "configmap" {
-            kubectl delete -f "$kubeconfig/$servicename_lower-configmap.yaml"
+        kubectl delete -f "$kubeconfig/$servicename_lower-configmap.yaml"
     }
     "dbjob" {
         kubectl delete -f "$kubeconfig/$servicename_lower-api-job-initialize-db.yaml"
