@@ -9,8 +9,9 @@
     * kubernetes
       * // yaml files
     * compose
-      * docker-compose.yaml
-      * docker-compose-init.yaml
+      * docker-compose-db.yml
+      * docker-compose.yml
+      * docker-compose-init.yml
     * \<microservicename\>
       * Dockerfile
       * config
