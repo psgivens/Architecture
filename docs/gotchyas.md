@@ -8,6 +8,10 @@
 
 *If you are having this error in a docker container then run*
 
-    docker system prune --volumes.
+    docker system prune --volumes
 
 *Then stop the docker app in your machine. Restart your machine and running everything from start.*
+
+Try this next:
+
+    dotnet nuget locals --clear all

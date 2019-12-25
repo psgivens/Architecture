@@ -2,7 +2,12 @@
 
 **Note** You can get a list of microservices with
 
-    Get-McsvcCommands -List
+    Get-MicroServiceDetails -List
+
+**Note** You can get a list of microservice commands with
+
+    Get-McsvcCommands 
+
 
 ## Running locally
 
