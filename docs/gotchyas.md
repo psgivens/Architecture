@@ -12,6 +12,15 @@
 
 *Then stop the docker app in your machine. Restart your machine and running everything from start.*
 
-Try this next:
+*Simpler fix*
+
+    docker-compose rm
+    docker-compose up
+
+It may be a docker-compose caching issue. I'll try updating the start scripts to force new creation. 
+
+Looking at [docker-compose up](https://docs.docker.com/compose/reference/up/) help, I think I may be able to fix it with either `--force-recreate` and/or `--renew-anon-volumes`. I'll have to wait until the next time the problem occurs to find out. 
+
+If nothing else, try this next:
 
     dotnet nuget locals --clear all

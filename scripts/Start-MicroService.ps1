@@ -64,7 +64,7 @@ if ($Local) {
     switch ($Part.ToLower()) {
         "db" {
             Write-Host ("Launching ``docker-compose -f docker-compose-db.yml up`` from " + "$env:BESPIN_REPOS/$ServiceName/compose")
-            docker-compose -f docker-compose-db.yml up
+            docker-compose -f docker-compose-db.yml --renew-anon-volumes up
 
         }
         default    {  

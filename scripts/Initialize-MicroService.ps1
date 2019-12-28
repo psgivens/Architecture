@@ -24,7 +24,7 @@ param (
 if ($Compose) {
 
     Push-Location "$env:BESPIN_REPOS/$ServiceName/compose"
-    docker-compose -f docker-compose-init.yml up
+    docker-compose -f docker-compose-init.yml --renew-anon-volumes up
     Pop-Location
 
 } elseif ($K8s) {
